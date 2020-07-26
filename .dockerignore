@@ -1,0 +1,8 @@
+.git
+.DS_Store
+.gitignore
+README.md
+/download/*
+/manifests/*
+/images/kafka/Dockerfile
+/images/zk/Dockerfile

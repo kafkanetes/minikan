@@ -1,0 +1,98 @@
+#!/usr/bin/env python
+"""
+Mini kafka-kubernetes CLI controller
+
+This python script helps with building and DevOps automation when it comes to:
+
+- Managing the docker images life-cycle to build and push new releases of minikan
+- Generating kubernetes manifests to stand-up minikan locally
+- Operating local cluster instance with `up`, `down`, `status` and other commands
+
+Usage: `./minikan --help`
+
+"""
+import logging
+import argparse
+from automation.settings import load_config
+from automation.log_conf import ConsoleLog
+from automation.build import KafkaBuilder
+
+BUILD_TARGETS = ['zk', 'kafka']
+
+config = load_config()
+logger = logging.getLogger("minikan")
+
+##
+# Build command
+#
+def handle_build_cmd(args):
+    """Run `build` command."""
+    logger.info("Building {}..".format(args.target))
+
+    if args.target == "kafka":
+        builder = KafkaBuilder(config)
+        archive_path = builder.download()
+        kafka_path = builder.unpack(archive_path)
+
+    elif args.target == "zk":
+        pass
+
+    else:
+        raise NotImplemented()
+
+
+##
+# Cluster command
+#
+def handle_cluster_cmd(args):
+    """Run `cluster` command."""
+    # Import only within the function scope.
+    # from automation.cluster import KafkaCluster
+    raise NotImplemented()
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(prog="minikan")
+
+    # Add arguments shared between commands.
+    parser.add_argument('-v', '--verbose', dest='verbose',
+                        action='count', default=3)  # 3 - INFO, 2 WARN, 1 - ERROR, 0 - CRIT
+    parser.add_argument('-s', '--silent', dest='silent', default=False,
+                        help="Override any logging verbosity with silence.")
+
+    # Add subparsers
+    subparsers = parser.add_subparsers(dest='command')
+
+    # `build` command
+    build_parser = subparsers.add_parser("build")
+    build_parser.add_argument("target", choices=BUILD_TARGETS)
+
+    # `cluster` command
+    # cluster_parser = subparsers.add_parser("cluster")
+    # TODO: add 'up', 'down', 'status'
+
+    args = parser.parse_args()
+
+    if args.command is None:
+        parser.print_help()
+        exit(1)
+
+    # Bootstrap console logging
+    console_log = ConsoleLog()
+    if args.silent:
+        console_log.set_console_handler(0)
+    else:
+        console_log.set_console_handler(args.verbose)
+
+    logger.info('Running minikan v{minikan}'.format(**config.versions))
+
+    return args
+
+
+if __name__ == '__main__':
+    args = parse_args()
+
+    if args.command == "build":
+        handle_build_cmd(args)
+    elif args.command == "cluster":
+        handle_cluster_cmd(args)
