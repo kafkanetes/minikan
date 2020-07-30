@@ -53,3 +53,12 @@ If you are fine with the produced script, you can feed to the bash input pipe:
 
 	python dockerize.py --push | bash
 
+## Credit and Gratitude
+
+It is worth to acknowledge work of communities and individuals behind the related open source projects. Their work and contribution is inspirational and deserves obvious credit.
+
+- [Apache ZooKeeper](https://zookeeper.apache.org/)
+- [Apache Kafka](https://kafka.apache.org/)
+- [wurstmeister/kafka-docker](https://github.com/wurstmeister/kafka-docker/)
+
+Thank you.
