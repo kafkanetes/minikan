@@ -51,5 +51,5 @@ will print out bash-script commands that will:
 
 If you are fine with the produced script, you can feed to the bash input pipe:
 
-	python dockerize --push | bash
+	python dockerize.py --push | bash
 
