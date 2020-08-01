@@ -40,26 +40,29 @@ def get_build_date():
     return d.isoformat("T") + "Z"
 
 
-def get_kan_zk_version(vars):
+def get_kan_zk_version(params):
     """Return zookeeper docker image version."""
-    return "{minikan_version}_{scala_version}_{zookeeper_version}".format(**vars)
+    return "{minikan_version}_{zookeeper_version}".format(**params)
 
 
-def get_kan_kafka_version(vars):
+def get_kan_kafka_version(params):
     """Return kafka docker image version."""
-    return "{minikan_version}_{scala_version}_{kafka_version}".format(**vars)
+    return "{minikan_version}_{scala_version}_{kafka_version}".format(**params)
 
 
-def print_build_cmds(vars):
-    """Generate bash-code with `docker build` commands."""
-    print("""set -e
-set echo off
-echo "minikan dockerization - Start"
+def _build_zk(params):
+    return """# Build zookeeper image
+docker build \
+-f images/zk/Dockerfile \
+-t kafkanetes/minikan-zk:{kan_zk_version} \
+--build-arg build_date="{build_date}" \
+--build-arg minikan_version={minikan_version} \
+--build-arg zookeeper_version={zookeeper_version} \
+.
+""".format(**params)
 
-# Build zookeeper image
-# docker build -f images/zk/Dockerfile -t kafkanetes/minikan-zk:latest .
-
-# Build kafka image
+def _build_kafka(params):
+    return """# Build kafka image
 docker build \
 -f images/kafka/Dockerfile \
 -t kafkanetes/minikan-kafka:{kan_kafka_version} \
@@ -68,31 +71,55 @@ docker build \
 --build-arg scala_version={scala_version} \
 --build-arg kafka_version={kafka_version} \
 .
+""".format(**params)
 
-echo "minikan dockerization - Done"
+
+def print_build_cmds(cliargs, params):
+    """Generate bash-code with `docker build` commands."""
+    print("""set -e
+set echo off
+echo "minikan dockerization - Start"
+""")
+
+    if "all" in cliargs or "zk" in cliargs:
+        print(_build_zk(params))
+
+    if "all" in cliargs or "kafka" in cliargs:
+        print(_build_kafka(params))
+
+    print("""echo "minikan dockerization - Done"
 echo
 echo Review produced images:
+docker images kafkanetes/minikan-zk | head
 docker images kafkanetes/minikan-kafka | head
 echo
 echo Optionally, inspect image content by running:
+echo docker run -it kafkanetes/minikan-zk:{kan_zk_version} bash
 echo docker run -it kafkanetes/minikan-kafka:{kan_kafka_version} bash
-""".format(**vars))
+""".format(**params))
     # Optionally, upload images
-    if "--push" in sys.argv:
+    if "--push" in cliargs:
         print("""set echo off
 echo "Upload minikan docker images"
 # docker push
-""".format(**vars))
+""".format(**params))
 
 
 ##
 # Main
 #
-vars = {k.lower(): getattr(versions, k)
+
+# args
+if len(sys.argv) > 1:
+    cliargs = sys.argv[1:]
+else:
+    cliargs = ["all"]
+# params
+params = {k.lower(): getattr(versions, k)
         for k in dir(versions)
         if not k.startswith('__')}
-vars['build_date'] = get_build_date()
-vars['kan_zk_version'] = get_kan_zk_version(vars)
-vars['kan_kafka_version'] = get_kan_kafka_version(vars)
-
-print_build_cmds(vars)
+params['build_date'] = get_build_date()
+params['kan_zk_version'] = get_kan_zk_version(params)
+params['kan_kafka_version'] = get_kan_kafka_version(params)
+# print bash
+print_build_cmds(cliargs, params)

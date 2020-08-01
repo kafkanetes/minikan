@@ -15,7 +15,7 @@ import logging
 import argparse
 from automation.settings import load_config
 from automation.log_conf import ConsoleLog
-from automation.build import KafkaBuilder
+from automation.build import ZkBuilder, KafkaBuilder
 
 BUILD_TARGETS = ['zk', 'kafka']
 
@@ -29,14 +29,16 @@ def handle_build_cmd(args):
     """Run `build` command."""
     logger.info("Building {}..".format(args.target))
 
-    if args.target == "kafka":
+    if args.target == "zk":
+        builder = ZkBuilder(config)
+        archive_path = builder.download()
+        builder.verify()
+        zk_path = builder.unpack_archive(archive_path, extension=".tar.gz")
+    elif args.target == "kafka":
         builder = KafkaBuilder(config)
         archive_path = builder.download()
-        kafka_path = builder.unpack(archive_path)
-
-    elif args.target == "zk":
-        pass
-
+        builder.verify()
+        kafka_path = builder.unpack_archive(archive_path)  
     else:
         raise NotImplemented()
 

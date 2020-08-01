@@ -41,4 +41,8 @@ COPY --from=builder /root/download/kafka_${SCALA_VERSION}-${KAFKA_VERSION} /opt/
 
 COPY ./images/kafka/* ${KAFKA_HOME}/bin/
 
+WORKDIR ${KAFKA_HOME}
+
+EXPOSE 9092
+
 CMD ["start-kafka.sh"]
