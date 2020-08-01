@@ -33,8 +33,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     jq
 
-COPY --from=builder /root/download/apache-zookeeper-${ZOOKEEPER_VERSION} /opt/apache-zookeeper-${ZOOKEEPER_VERSION}
-RUN ln -s /opt/apache-zookeeper-${ZOOKEEPER_VERSION} ${ZK_HOME} \
+COPY --from=builder /root/download/apache-zookeeper-${ZOOKEEPER_VERSION}-bin /opt/zk-${ZOOKEEPER_VERSION}
+RUN ln -s /opt/zk-${ZOOKEEPER_VERSION} ${ZK_HOME} \
     && mv ${ZK_HOME}/conf/zoo_sample.cfg ${ZK_HOME}/conf/zoo.cfg \
     && sed -i "s|/tmp/zookeeper|$ZK_HOME/data|g" ${ZK_HOME}/conf/zoo.cfg \
     && mkdir ${ZK_HOME}/data

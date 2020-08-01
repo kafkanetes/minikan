@@ -108,7 +108,7 @@ class ZkBuilder(Builder):
 
     def download(self):
         """Download zookeeper binaries if they are missing."""
-        archive_filename = f"{self.file_part}.tar.gz"
+        archive_filename = f"{self.file_part}-bin.tar.gz"
         zookeeper_version = self.config.versions.zookeeper
        
         local_path = Path(self.config.folders.download).joinpath(archive_filename)
@@ -125,7 +125,7 @@ class ZkBuilder(Builder):
 
     def verify(self):
         """Verify download."""
-        archive_filename = f"{self.file_part}.tar.gz"
+        archive_filename = f"{self.file_part}-bin.tar.gz"
         dist_url = "https://www.apache.org/dist/zookeeper"
         zookeeper_version = self.config.versions.zookeeper
         signatures = {
