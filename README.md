@@ -49,7 +49,20 @@ will print out bash-script commands that will:
 - contain the "docker build" commands to produce images (as discussed above)
 - finally, with '--push' option there would be also a command that will try to upload the newest files in order to update content of the respective dockerhub.com repository.
 
-If you are fine with the produced script, you can feed to the bash input pipe:
+Dockerization will produces the following images:
+
+ - "builder" kafkanetes/minikan-buidler
+ - "base" kafkanetes/minikan-base
+ - "zk" kafkanetes/minikan-zk
+ - "kafka" kafkanetes/minikan-kafka
+
+FOr most cases the first two can be skipped if you want to explicitly re-run only particualr steps:
+
+	python dockerize.py zk | bash
+	python dockerize.py kafka | bash
+	python dockerize.py base zk kafka | bash
+
+If you are fine with the produced script, you can feed to the bash input pipe (optionally adding --push):
 
 	python dockerize.py --push | bash
 

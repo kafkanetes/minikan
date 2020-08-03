@@ -1,18 +1,18 @@
-FROM python:3.8.5-buster as builder
-
-COPY . /root
-WORKDIR /root
-
-RUN pip install -r automation/requirements.txt \
-	&& python minikan build zk
-
-FROM openjdk:11.0.8-jre-slim
-MAINTAINER kafkanetes
-
+# args
 ARG minikan_version=0.1.0
 ARG zookeeper_version=3.6.1
 ARG vcs_ref=unspecified
 ARG build_date=unspecified
+
+# builder stage
+FROM kafkanetes/minikan-builder:${minikan_version} as builder
+COPY . /root
+WORKDIR /root
+RUN python minikan build zk
+
+# zk image
+FROM kafkanetes/minikan-base:${minikan_version}
+MAINTAINER kafkanetes
 
 LABEL org.label-schema.name="minikan-zk" \
       org.label-schema.description="kafkanetes - Apache Zookeeper" \

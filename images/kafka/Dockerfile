@@ -1,22 +1,22 @@
-FROM python:3.8.5-buster as builder
-
-COPY . /root
-WORKDIR /root
-
-RUN pip install -r automation/requirements.txt \
-	&& python minikan build kafka
-
-FROM openjdk:11.0.8-jre-slim
-MAINTAINER kafkanetes
-
+# args
 ARG minikan_version=0.1.0
 ARG scala_version=2.13
 ARG kafka_version=2.5.0
 ARG vcs_ref=unspecified
 ARG build_date=unspecified
 
+# builder stage
+FROM kafkanetes/minikan-builder:${minikan_version} as builder
+COPY . /root
+WORKDIR /root
+RUN python minikan build kafka
+
+# kafka image
+FROM kafkanetes/minikan-base:${minikan_version}
+MAINTAINER kafkanetes
+
 LABEL org.label-schema.name="minikan-kafka" \
-      org.label-schema.description="kafkanetes - Apache Kafka broker" \
+      org.label-schema.description="kafkanetes - Apache Kafka" \
       org.label-schema.build-date="${build_date}" \
       org.label-schema.vcs-url="https://github.com/kafkanetes/minikan" \
       org.label-schema.vcs-ref="${vcs_ref}" \
