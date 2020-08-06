@@ -24,7 +24,7 @@ spec:
   ports:
   - name: kafka-port
     port: 9092
-    targetPort: 9092
+    protocol: TCP
   selector:
     app: kan-kafka
     kanBrokerId: "1"
