@@ -18,8 +18,6 @@ spec:
         app: kan-kafka
         kanBrokerId: "1"
     spec:
-      hostname: kafka-1
-      subdomain: kan-kafka
       containers:
       - name: kafka
         image: kafkanetes/minikan-kafka:0.1.0_2.13_2.5.0
@@ -27,11 +25,30 @@ spec:
         ports:
         - containerPort: 9092
         env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         - name: KAFKA_BROKER_ID
           value: "1"
         - name: KAFKA_ZOOKEEPER_CONNECT
-          value: kan-zk:2181
-        - name: KAFKA_ADVERTISED_LISTENERS
-          value: PLAINTEXT://kan-kafka:9092
-        - name: KAFKA_LISTENERS
-          value: PLAINTEXT://kafka-1.kan-kafka:9092
+          value: kan-zk-1:2181
+        command:
+        - sh
+        - -exc
+        - |
+          export KAFKA_LISTENERS=PLAINTEXT://${POD_IP}:9092 && \
+          export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kan-kafka-1.${POD_NAMESPACE}:9092 && \
+          exec start-kafka.sh

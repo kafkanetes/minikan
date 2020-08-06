@@ -79,6 +79,23 @@ Manifests are deployed using:
 	kubectl apply -R -f ./manifests/
 	kubectl describe deploy/kan-kafka-1 
 
+Inspect logs and observer the work of containers.
+
+One convenient way to the pods inside the cluster for development purposes would be via port-forwarding tunnels. For that,
+you need to run in parallel terminals:
+
+	kubectl port-forward --address 0.0.0.0 svc/kan-kafka-1 :9092
+
+You also need to update your /etc/hosts file with:
+
+	127.0.0.1       kan-kafka-1.minikan
+
+
+Note that for most operations direct connectivity to broker is enough. Zookeeper support is deprecated and will be replaced by the kafka protocol.
+But if you still need zookeeper, then you also have an option run another port-forward:
+
+	kubectl port-forward --address 0.0.0.0 svc/kan-zk-1 32181:2181
+
 
 ## Tests
 
