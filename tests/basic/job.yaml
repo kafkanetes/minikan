@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minikan-test
+  labels:
+    testname: minikan-basic
+spec:
+  template:
+    spec:
+      containers:
+      - name: py
+        image: kafkanetes/minikan-builder:0.1.0
+        command: ['python', '-c', 'print("Hello minikan!")']
+      restartPolicy: Never
+  backoffLimit: 4

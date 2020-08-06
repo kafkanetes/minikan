@@ -1,0 +1,72 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kan-zk
+spec:
+  # headless zk service - results in DNS record shared by the services with the same subdomain
+  clusterIP: None
+  ports:
+  - name: zk-port # Actually, no port is needed.
+    port: 2181
+    targetPort: 2181
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kan-zk-1
+  labels:
+    app: kan-zk
+    kanZookeeperId: "1"
+spec:
+  type: ClusterIP
+  ports:
+    - name: client
+      port: 2181
+      protocol: TCP
+    - name: follower
+      port: 2888
+      protocol: TCP
+    - name: leader
+      port: 3888
+      protocol: TCP
+  selector:
+    app: kan-zk
+    kanZookeeperId: "1"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kan-zk-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kan-zk
+  template:
+    metadata:
+      labels:
+        app: kan-zk
+        kanZookeeperId: "1"
+    spec:
+      hostname: zk-1
+      subdomain: kan-zk
+      containers:
+        - name: zk
+          image: kafkanetes/minikan-zk:0.1.0_3.6.1
+          ports:
+            - containerPort: 2181
+            - containerPort: 2888
+            - containerPort: 3888
+          env:
+            - name: ZOOKEEPER_ID
+              value: "1"
+            - name: ZOOKEEPER_SERVER_1
+              value: "kan-zk-1"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"

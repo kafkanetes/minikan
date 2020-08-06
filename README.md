@@ -66,6 +66,25 @@ If you are fine with the produced script, you can feed to the bash input pipe (o
 
 	python dockerize.py --push | bash
 
+## Running in kubernetes
+
+The **minikan** package has been developed and tested targeting *desktop docker* kubernetes.
+
+### Deploying manifests
+
+Manifests are deployed using:
+
+	kubectl create namespace minikan # with the specific namespace
+	kubectl config set-context $(kubectl config current-context) --namespace minikan #select namespace
+	kubectl apply -R -f ./manifests/
+	kubectl describe deploy/kan-kafka-1 
+
+
+## Tests
+
+See [tests/basic/README.md](tests/basic/REAME.md)
+
+
 ## Credit and Gratitude
 
 It is worth to acknowledge work of communities and individuals behind the related open source projects. Their work and contribution is inspirational and deserves obvious credit.

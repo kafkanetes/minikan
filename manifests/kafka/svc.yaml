@@ -1,0 +1,30 @@
+---
+# Headless kafka service - results in DNS record shared by the services with the same subdomain
+apiVersion: v1
+kind: Service
+metadata:
+  name: kan-kafka
+spec:
+  clusterIP: None
+  ports:
+  - name: kafka-port # Actually, no port is needed.
+    port: 9092
+    targetPort: 9092
+---
+# Normal service pointing ot a single ZK instance
+apiVersion: v1
+kind: Service
+metadata:
+  name: kan-kafka-1
+  labels:
+    app: kan-kafka
+    kanBrokerId: "1"
+spec:
+  type: ClusterIP
+  ports:
+  - name: kafka-port
+    port: 9092
+    targetPort: 9092
+  selector:
+    app: kan-kafka
+    kanBrokerId: "1"

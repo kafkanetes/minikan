@@ -1,0 +1,36 @@
+---
+# Headless zk service - results in DNS record shared by the services with the same subdomain
+apiVersion: v1
+kind: Service
+metadata:
+  name: kan-zk
+spec:
+  clusterIP: None
+  ports:
+  - name: zk-port # Actually, no port is needed.
+    port: 2181
+    targetPort: 2181
+---
+# Normal service pointing ot a single ZK instance
+apiVersion: v1
+kind: Service
+metadata:
+  name: kan-zk-1
+  labels:
+    app: kan-zk
+    kanZookeeperId: "1"
+spec:
+  type: ClusterIP
+  ports:
+    - name: client
+      port: 2181
+      protocol: TCP
+    - name: follower
+      port: 2888
+      protocol: TCP
+    - name: leader
+      port: 3888
+      protocol: TCP
+  selector:
+    app: kan-zk
+    kanZookeeperId: "1"
