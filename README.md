@@ -84,7 +84,7 @@ Inspect logs and observer the work of containers.
 One convenient way to the pods inside the cluster for development purposes would be via port-forwarding tunnels. For that,
 you need to run in parallel terminals:
 
-	kubectl port-forward --address 0.0.0.0 svc/kan-kafka-1 :9092
+	kubectl port-forward --address 0.0.0.0 svc/kan-kafka-1 9092:9092
 
 You also need to update your /etc/hosts file with:
 
