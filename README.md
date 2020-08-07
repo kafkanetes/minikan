@@ -80,7 +80,7 @@ Manifests are deployed using:
 
 	kubectl create namespace minikan # with the specific namespace
 	kubectl config set-context $(kubectl config current-context) --namespace minikan #select namespace
-	kubectl apply -R -f ./manifests/
+	kubectl apply -R -f ./manifests/latest
 	kubectl describe deploy/kan-kafka-1 
 
 After playing the manifests, you might want to inspect logs and observe the work of containers. There should be no visible errors.
@@ -93,7 +93,7 @@ After playing the manifests, you might want to inspect logs and observe the work
 
 	127.0.0.1       kan-kafka-1.minikan
 
-This is required since `kan-kafka-1.minikan` is an ADVERTISED_LISTENER (domain `minikan` == k8s namespace where the manifest are deployed). So this host will be reported as a part of the kafka metadata (refreshed approximately every 20s, but in our case - always equals to a single broker for the simplest scenario).
+This is required since `kan-kafka-1.minikan` is an ADVERTISED_LISTENER (domain `minikan` equals to kubernetes namespace where the minikan manifests are deployed). So this host will be reported as a part of the kafka metadata (refreshed approximately every 20s, but in our case - always equals to a single broker for the simplest scenario).
 
 (On WSL you might have this file auto-regenerated per reboot).
 
