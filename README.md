@@ -81,15 +81,22 @@ Manifests are deployed using:
 
 Inspect logs and observer the work of containers.
 
+### Connecting to kafka
+
 One convenient way to the pods inside the cluster for development purposes would be via port-forwarding tunnels. For that,
 you need to run in parallel terminals:
 
-	kubectl port-forward --address 0.0.0.0 svc/kan-kafka-1 9092:9092
+	kubectl port-forward --address 0.0.0.0 svc/kan-kafka-socat-1 9092:9092
 
-You also need to update your /etc/hosts file with:
+The above will connect to the [socat wiring](https://hub.docker.com/r/alpine/socat/) - tiny alpine-based tcp forwarding service that continuously listens and reroutes TCP traffic withing kubernetes namespace where brokers are deployed. In terms of networking, this is one of the most elegant approaches compared to NodePort, LoadBalancer, L4-ingress proxies and firewall bypasses. It is well suited for running kubernetes in the local environment (such as Docker Desktop).
+
+You might want to update your /etc/hosts file with:
 
 	127.0.0.1       kan-kafka-1.minikan
 
+(On WSL you might have this file auto-regenerated per reboot).
+
+### Connecting to zookeeper
 
 Note that for most operations direct connectivity to broker is enough. Zookeeper support is deprecated and will be replaced by the kafka protocol.
 But if you still need zookeeper, then you also have an option run another port-forward:

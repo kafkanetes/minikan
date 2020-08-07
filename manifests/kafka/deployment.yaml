@@ -50,5 +50,5 @@ spec:
           - -exc
           - |
             export KAFKA_LISTENERS=PLAINTEXT://${POD_IP}:9092 && \
-            export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kan-kafka-1.${POD_NAMESPACE}:9092 && \
+            export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kan-kafka-${KAFKA_BROKER_ID}.${POD_NAMESPACE}:9092 && \
             exec start-kafka.sh
