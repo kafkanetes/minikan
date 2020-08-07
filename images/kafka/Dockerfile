@@ -1,19 +1,20 @@
-# args
-ARG minikan_version=0.1.0
-ARG scala_version=2.13
-ARG kafka_version=2.5.0
-ARG vcs_ref=unspecified
-ARG build_date=unspecified
-
 # builder stage
+ARG minikan_version=latest
 FROM kafkanetes/minikan-builder:${minikan_version} as builder
+# args
 COPY . /root
 WORKDIR /root
 RUN python minikan build kafka
 
 # kafka image
+ARG minikan_version=latest
 FROM kafkanetes/minikan-base:${minikan_version}
 MAINTAINER kafkanetes
+# more args
+ARG scala_version=2.13
+ARG kafka_version=2.5.0
+ARG vcs_ref=unspecified
+ARG build_date=unspecified
 
 LABEL org.label-schema.name="minikan-kafka" \
       org.label-schema.description="kafkanetes - Apache Kafka" \

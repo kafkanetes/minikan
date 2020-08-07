@@ -41,9 +41,11 @@ You will find kafka files located under `/opt/kafka` which is what the ENV value
 
 If you have basic *python3* installation (which means that `pip install automation/requirements.txt` is optional), the following:
 
-	python dockerize.py
+	python dockerize.py builder all
 
-will print out bash-script commands that will:
+Note that  `all = all images w/o builder`, but you don't need to rebuild builder that frequently for the 2-stage building Dockerfiles.
+
+The above will print out bash-script commands that will:
 
 - define all relevant versions
 - contain the "docker build" commands to produce images (as discussed above)
@@ -56,11 +58,13 @@ Dockerization will produces the following images:
  - "zk" kafkanetes/minikan-zk
  - "kafka" kafkanetes/minikan-kafka
 
-FOr most cases the first two can be skipped if you want to explicitly re-run only particualr steps:
+For most cases the first two can be skipped if you want to explicitly re-run only particualr steps:
 
-	python dockerize.py zk | bash
-	python dockerize.py kafka | bash
-	python dockerize.py base zk kafka | bash
+	python dockerize.py builder all | bash  # results in building all images starting with builder
+	python dockerize.py | bash  # results in building all images except builder
+	python dockerize.py base zk kafka | bash  # only base
+	python dockerize.py zk | bash  # only zookeeper
+	python dockerize.py kafka | bash  # only kafka
 
 If you are fine with the produced script, you can feed to the bash input pipe (optionally adding --push):
 
@@ -79,7 +83,7 @@ Manifests are deployed using:
 	kubectl apply -R -f ./manifests/
 	kubectl describe deploy/kan-kafka-1 
 
-Inspect logs and observer the work of containers.
+After playing the manifests, you might want to inspect logs and observe the work of containers. There should be no visible errors.
 
 ### Connecting to kafka
 
@@ -88,11 +92,13 @@ you need to run in parallel terminals:
 
 	kubectl port-forward --address 0.0.0.0 svc/kan-kafka-socat-1 9092:9092
 
-The above will connect to the [socat wiring](https://hub.docker.com/r/alpine/socat/) - tiny alpine-based tcp forwarding service that continuously listens and reroutes TCP traffic withing kubernetes namespace where brokers are deployed. In terms of networking, this is one of the most elegant approaches compared to NodePort, LoadBalancer, L4-ingress proxies and firewall bypasses. It is well suited for running kubernetes in the local environment (such as Docker Desktop).
+The above will connect to the [socat wiring](https://hub.docker.com/r/alpine/socat/) - tiny alpine-based tcp forwarding service that continuously listens and reroutes TCP traffic withing kubernetes namespace where brokers are deployed. In terms of networking, this is one of the most elegant approaches compared to NodePort, LoadBalancer, L4-ingress proxies, firewall bypasses, etc. It is well suited for running kubernetes in the local environment (such as Docker Desktop - for comparison see [how to expose ports via docker-compose](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/first-steps-with-docker-and-kubernetes-introduction/ba-p/357525)).
 
 You might want to update your /etc/hosts file with:
 
 	127.0.0.1       kan-kafka-1.minikan
+
+This is required since `kan-kafka-1.minikan` is an ADVERTISED_LISTENER (domain `minikan` == k8s namespace where the manifest are deployed). So this host will be reported as a part of the kafka metadata (refreshed approximately every 20s, but in our case - always equals to a single broker for the simplest scenario).
 
 (On WSL you might have this file auto-regenerated per reboot).
 

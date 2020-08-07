@@ -76,6 +76,7 @@ def _build_builder(params):
     return """# Build builder image - used for multi-stage docker automation
 docker build \
 -f images/builder/Dockerfile \
+-t kafkanetes/minikan-builder:latest \
 -t kafkanetes/minikan-builder:{minikan_version} \
 --build-arg build_date="{build_date}" \
 --build-arg vcs_ref="{vcs_revision}" \
@@ -88,6 +89,7 @@ def _build_base(params):
     return """# Build base image
 docker build \
 -f images/base/Dockerfile \
+-t kafkanetes/minikan-base:latest \
 -t kafkanetes/minikan-base:{minikan_version} \
 --build-arg build_date="{build_date}" \
 --build-arg vcs_ref="{vcs_revision}" \
@@ -100,6 +102,7 @@ def _build_zk(params):
     return """# Build zookeeper image
 docker build \
 -f images/zk/Dockerfile \
+-t kafkanetes/minikan-zk:latest \
 -t kafkanetes/minikan-zk:{kan_zk_version} \
 --build-arg build_date="{build_date}" \
 --build-arg vcs_ref="{vcs_revision}" \
@@ -112,6 +115,7 @@ def _build_kafka(params):
     return """# Build kafka image
 docker build \
 -f images/kafka/Dockerfile \
+-t kafkanetes/minikan-kafka:latest \
 -t kafkanetes/minikan-kafka:{kan_kafka_version} \
 --build-arg build_date="{build_date}" \
 --build-arg vcs_ref="{vcs_revision}" \
@@ -129,7 +133,7 @@ set echo off
 echo "minikan dockerization - Start"
 """)
 
-    if "all" in cliargs or "builder" in cliargs:
+    if "builder" in cliargs:
         print(_build_builder(params))
 
     if "all" in cliargs or "base" in cliargs:

@@ -1,18 +1,18 @@
-# args
-ARG minikan_version=0.1.0
-ARG zookeeper_version=3.6.1
-ARG vcs_ref=unspecified
-ARG build_date=unspecified
-
 # builder stage
+ARG minikan_version=latest
 FROM kafkanetes/minikan-builder:${minikan_version} as builder
 COPY . /root
 WORKDIR /root
 RUN python minikan build zk
 
 # zk image
+ARG minikan_version=latest
 FROM kafkanetes/minikan-base:${minikan_version}
 MAINTAINER kafkanetes
+# more args
+ARG zookeeper_version=3.6.1
+ARG vcs_ref=unspecified
+ARG build_date=unspecified
 
 LABEL org.label-schema.name="minikan-zk" \
       org.label-schema.description="kafkanetes - Apache Zookeeper" \
