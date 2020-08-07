@@ -117,7 +117,7 @@ But if you still need zookeeper, then you also have an option run another port-f
 
 ## Tests
 
-See [tests/basic/README.md](tests/basic/REAME.md)
+See [tests/basic/README.md](tests/basic/README.md)
 
 
 ## Credit and Gratitude
