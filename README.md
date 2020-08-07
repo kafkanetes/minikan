@@ -87,20 +87,25 @@ After playing the manifests, you might want to inspect logs and observe the work
 
 ### Connecting to kafka
 
-One convenient way to the pods inside the cluster for development purposes would be via port-forwarding tunnels. For that,
-you need to run in parallel terminals:
+> bootstrap.servers=kan-kafka-1.minikan:9092
 
-	kubectl port-forward --address 0.0.0.0 svc/kan-kafka-socat-1 9092:9092
-
-The above will connect to the [socat wiring](https://hub.docker.com/r/alpine/socat/) - tiny alpine-based tcp forwarding service that continuously listens and reroutes TCP traffic withing kubernetes namespace where brokers are deployed. In terms of networking, this is one of the most elegant approaches compared to NodePort, LoadBalancer, L4-ingress proxies, firewall bypasses, etc. It is well suited for running kubernetes in the local environment (such as Docker Desktop - for comparison see [how to expose ports via docker-compose](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/first-steps-with-docker-and-kubernetes-introduction/ba-p/357525)).
-
-You might want to update your /etc/hosts file with:
+1. For the above to work, you might want to update your /etc/hosts file with:
 
 	127.0.0.1       kan-kafka-1.minikan
 
 This is required since `kan-kafka-1.minikan` is an ADVERTISED_LISTENER (domain `minikan` == k8s namespace where the manifest are deployed). So this host will be reported as a part of the kafka metadata (refreshed approximately every 20s, but in our case - always equals to a single broker for the simplest scenario).
 
 (On WSL you might have this file auto-regenerated per reboot).
+
+2. You also need to expose 9092 port on your local machine
+
+One convenient way to connect the pods inside the cluster for development purposes would be via port-forwarding tunnels. For that,
+you need to run in parallel terminals:
+
+	kubectl port-forward --address 0.0.0.0 svc/kan-kafka-socat-1 9092:9092
+
+The above will connect to the [socat wiring](https://hub.docker.com/r/alpine/socat/) - tiny alpine-based tcp forwarding service that continuously listens and reroutes TCP traffic withing kubernetes namespace where brokers are deployed. In terms of networking, this is one of the most elegant approaches compared to NodePort, LoadBalancer, L4-ingress proxies, firewall bypasses, etc. It is well suited for running kubernetes in the local environment (such as Docker Desktop - for comparison see [how to expose ports via docker-compose](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/first-steps-with-docker-and-kubernetes-introduction/ba-p/357525)).
+
 
 ### Connecting to zookeeper
 
