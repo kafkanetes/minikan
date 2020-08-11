@@ -104,7 +104,7 @@ you need to run in parallel terminals:
 
 	kubectl port-forward --address 0.0.0.0 svc/kan-kafka-socat-1 9092:9092
 
-The above will connect to the [socat wiring](https://hub.docker.com/r/alpine/socat/) - tiny alpine-based tcp forwarding service that continuously listens and reroutes TCP traffic withing kubernetes namespace where brokers are deployed. In terms of networking, this is one of the most elegant approaches compared to NodePort, LoadBalancer, L4-ingress proxies, firewall bypasses, etc. It is well suited for running kubernetes in the local environment (such as Docker Desktop - for comparison see [how to expose ports via docker-compose](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/first-steps-with-docker-and-kubernetes-introduction/ba-p/357525)).
+The above will connect to the [socat wiring](https://hub.docker.com/r/alpine/socat/) - tiny alpine-based tcp forwarding service that continuously listens and reroutes TCP traffic within kubernetes namespace where brokers are deployed. In terms of networking, this is one of the most elegant approaches compared to NodePort, LoadBalancer, L4-ingress proxies, firewall bypasses, etc. It is well suited for running kubernetes in the local environment (such as Docker Desktop - for comparison see [how to expose ports via docker-compose](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/first-steps-with-docker-and-kubernetes-introduction/ba-p/357525)).
 
 
 ### Connecting to zookeeper
