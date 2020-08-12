@@ -1,3 +1,10 @@
+<p align="center">
+  <a href="https://github.com/kafkanetes/">
+    <img src="/doc/img/logo.png?raw=true" width="200"/>
+  </a>
+</p>
+
+
 # minikan
 
 Set up a small-scale kafka cluster on local kubernetes - perfect for functionality testing and local development.
