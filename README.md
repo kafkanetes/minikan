@@ -2,6 +2,10 @@
 
 Set up a small-scale kafka cluster on local kubernetes - perfect for functionality testing and local development.
 
+> TL;DR - how to stand up kafkanetes minikan <3
+
+<p align="center"><img src="/doc/img/demo.gif?raw=true"/></p>
+
 ## Overview
 
 **minikan** stands for "mini" kafka-kubernetes (kan) and is a part of the [kafkanetes project](https://github.com/kafkanetes/).
